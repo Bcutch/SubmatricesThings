@@ -1,0 +1,117 @@
+package com.company;
+
+import java.io.*;
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        boolean done = false;
+        Scanner scan = new Scanner(System.in);
+        int MAXDATA = 0;
+        int[][] Array = null;
+
+        /*while (!done) {
+            System.out.println("Please type number of integers in file.");
+
+            double num = scan.nextInt();
+            double check = Math.sqrt(num);
+
+            if (check - (Math.floor(check)) == 0 && check != 1 && check != 0) {
+                done = true;
+                MAXDATA = (int)check;
+
+            }
+            else {
+                System.out.println();
+                System.out.println("Sorry your file must be a square 2d array. For example:");
+                System.out.println("1 2 3 4 5\n6 7 8 9 1\n2 3 4 5 6\n7 8 9 1 2\n3 4 5 6 7");
+                System.out.println("Please choose use file like this one, if you typed in the wrong amount of integers please type in correct amount.");
+            }
+        }*/
+
+
+        //System.out.println();
+        System.out.println("Please type file name.");
+
+        File file = new File(scan.next());
+
+        try {
+            Scanner fScan = new Scanner(file);
+
+            MAXDATA = fScan.nextInt();
+
+            Array = new int[MAXDATA][MAXDATA];
+
+            for (int i = 0; i < MAXDATA; i++) {
+                for (int j = 0; j < MAXDATA; j++) {
+                    if (fScan.hasNextInt()) {
+                        Array[j][i] = fScan.nextInt();
+                    }
+                }
+            }
+        }
+        catch (FileNotFoundException e) {
+            System.out.println(e);
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        /*for (int i = 0; i < MAXDATA; i++) {
+            for (int j = 0; j < MAXDATA; j++) {
+                System.out.print(Array[j][i]);
+            }
+            System.out.println();
+        }*/
+
+
+        int parameters = MAXDATA - 2;
+        int sum = 0;
+        int close = 10000;
+        int column = 0;
+        int row = 0;
+        int length = 0;
+
+        for (int i = parameters; i > 1; i--) {
+
+            for (int j = 0; j < (MAXDATA - i); j++) {
+
+                for (int k = 0; k < (MAXDATA - i); k++) {
+
+                    for (int l = j; l < (j + i); l++) {
+
+                        for (int o = k; o < (k + i); o++) {
+                            sum += Array[l][o];
+
+                        }
+                    }
+
+                    if (Math.abs(sum) < Math.abs(close)) {
+
+                        close = sum;
+                        column = j;
+                        row = k;
+                        length = i;
+                    }
+
+                    sum = 0;
+                }
+            }
+        }
+
+        if (close == 10000) {
+            System.out.println("There were no submatrices where the sum was closer to zero than 10,000.");
+        }
+        else {
+            System.out.println();
+            for (int i = row; i < (row + length); i++) {
+
+                for (int j = column; j < (column + length); j++) {
+                    System.out.print(Array[j][i] + " ");
+                }
+                System.out.println();
+            }
+        }
+    }
+}

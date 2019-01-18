@@ -7,10 +7,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        boolean done = false;
+        //boolean done = false;
         Scanner scan = new Scanner(System.in);
         int MAXDATA = 0;
         int[][] Array = null;
+// constants
 
         /*while (!done) {
             System.out.println("Please type number of integers in file.");
@@ -34,29 +35,45 @@ public class Main {
 
         //System.out.println();
         System.out.println("Please type file name.");
+//Request file name
 
         File file = new File(scan.next());
+//creates the file in java
 
         try {
+//tries to scan file
             Scanner fScan = new Scanner(file);
+//creates scanner for file
 
             MAXDATA = fScan.nextInt();
-
             Array = new int[MAXDATA][MAXDATA];
+//turns first value in file into the dimensions of array
 
             for (int i = 0; i < MAXDATA; i++) {
                 for (int j = 0; j < MAXDATA; j++) {
                     if (fScan.hasNextInt()) {
                         Array[j][i] = fScan.nextInt();
+//adds contents of files to array
                     }
                 }
             }
         }
         catch (FileNotFoundException e) {
+//if file can not be found, end program
             System.out.println(e);
             e.printStackTrace();
             System.exit(0);
         }
+
+        int numOfSubs = 0;
+
+        for (int i = (MAXDATA - 1); i > 0; i--) {
+            numOfSubs += (i * i);
+        }
+//finds amount of sub matrices in matrix
+
+        //System.out.println(numOfSubs);
+        int[][] subArray = new int[numOfSubs][4];
 
         /*for (int i = 0; i < MAXDATA; i++) {
             for (int j = 0; j < MAXDATA; j++) {
@@ -66,33 +83,50 @@ public class Main {
         }*/
 
 
-        int parameters = MAXDATA - 2;
+        int parameters = MAXDATA;
         int sum = 0;
-        int close = 10000;
-        int column = 0;
-        int row = 0;
-        int length = 0;
+        int close = 100000;
+        //int column = 0;
+        //int row = 0;
+        //int length = 0;
+        int num = 0;
+//creates variables to mark the location and size of sub array
 
         for (int i = parameters; i > 1; i--) {
+//tests sub matrix of this size
 
-            for (int j = 0; j < (MAXDATA - i); j++) {
+            for (int j = 0; j <= (MAXDATA - i); j++) {
+//moves columns of sub matrix
 
-                for (int k = 0; k < (MAXDATA - i); k++) {
+                for (int k = 0; k <= (MAXDATA - i); k++) {
+//moves rows of sub matrix
 
                     for (int l = j; l < (j + i); l++) {
 
+
                         for (int o = k; o < (k + i); o++) {
                             sum += Array[l][o];
+//adds all values of current sub matrix
 
                         }
                     }
 
+                    subArray[num][0] = j;
+                    subArray[num][1] = k;
+                    subArray[num][2] = i;
+                    subArray[num][3] = sum;
+
+                    num++;
+//adds all information of every matrix to array
+
+
                     if (Math.abs(sum) < Math.abs(close)) {
+//checks if sum of sub matrix is closer to zero than previous closest sum of a sub matrix
 
                         close = sum;
-                        column = j;
-                        row = k;
-                        length = i;
+                        //column = j;
+                        //row = k;
+                        //length = i;
                     }
 
                     sum = 0;
@@ -100,17 +134,41 @@ public class Main {
             }
         }
 
+        Arrays.sort(subArray, Comparator.comparing(b -> b[3]));
+//sorted array based on the sums
+
+        /*for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < numOfSubs; j++) {
+                System.out.print(subArray[j][i] + " ");
+            }
+            System.out.println();
+        }*/
+
         if (close == 10000) {
-            System.out.println("There were no submatrices where the sum was closer to zero than 10,000.");
+            System.out.println("There were no sub matrices where the sum was closer to zero than 100,000.");
+//if there were no sub matrix closer than 100000 then it wasn't recorded
         }
         else {
-            System.out.println();
-            for (int i = row; i < (row + length); i++) {
+            for (int h = 0; h < numOfSubs; h++) {
+                if (subArray[h][3] == close) {
 
-                for (int j = column; j < (column + length); j++) {
-                    System.out.print(Array[j][i] + " ");
+                    System.out.println();
+                    System.out.println("The sum is: " + subArray[h][3]);
+                    System.out.println("The starting position of the sub array or sub matrix is: [" + subArray[h][0] + "][" + subArray[h][1] + "]");
+                    System.out.println("Sub-Array:");
+//prints other required information
+
+                    for (int i = subArray[h][1]; i < (subArray[h][1] + subArray[h][2]); i++) {
+
+                        for (int j = subArray[h][0]; j < (subArray[h][0] + subArray[h][2]); j++) {
+                            System.out.print(Array[j][i] + " ");
+//prints the array at recorded location and size
+                        }
+                        System.out.println();
+                    }
+                    System.out.println();
+
                 }
-                System.out.println();
             }
         }
     }
